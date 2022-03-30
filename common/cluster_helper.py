@@ -45,17 +45,10 @@ class ClusterHelper:
             table_name = self.get_table_name(x)
             try:
                 with ysql_session.cursor() as curs:
-                    curs.execute(f'CREATE TABLE IF NOT EXISTS {table_name} (k SERIAL PRIMARY KEY, v1 VARCHAR, v2 INT, v3 TEXT)')
+                    curs.execute(f'CREATE TABLE IF NOT EXISTS {table_name} (k SERIAL PRIMARY KEY, v1 VARCHAR, v2 INT, v3 TEXT, v4 SERIAL UNIQUE)')
                     logging.info(f'Created table {table_name} on database {dbname}')
             except Exception as e:
                 raise Exception(f'Error creating table: {e}') from e
-
-            try:
-                with ysql_session.cursor() as curs:
-                    curs.execute(f'CREATE INDEX ON {table_name} (v1)')
-                    logging.info(f'Created index on table {table_name}, database {dbname}')
-            except Exception as e:
-                raise Exception(f'Error creating table {table_name} on databse {dbname}: {e}') from e
 
     def setup_cluster(self, num_databases, num_tables):
         # Create databases

@@ -13,12 +13,12 @@ class YBConnection:
             dbpassword (str): Password
             useipv6 (bool, optional): Whether to use ipv6. Defaults to False.
         """
-        self.host = host if host is not None else self._get_local_ipaddr()
-        self.port = port if port is not None else 5433
         self.dbuser = dbuser
         self.dbpassword = dbpassword
         self.useipv6 = useipv6
         self.ysql_session = None
+        self.host = host if host is not None else self._get_local_ipaddr()
+        self.port = port if port is not None else 5433
 
     def _get_local_ipaddr(self):
         # Get the local ipv4 or ipv6 address of YW API

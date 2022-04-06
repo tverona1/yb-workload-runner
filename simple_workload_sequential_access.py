@@ -12,9 +12,6 @@ class SimpleWorkloadSequentialAccess(User):
         self.cur_table = 1
         self.conn = None
 
-    # Wait time between each task
-    wait_time = between(0.01, 0.1)
-
     def _random_string(self,length):
        return ''.join(random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(length))
 

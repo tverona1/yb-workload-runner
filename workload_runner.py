@@ -3,8 +3,10 @@ import logging
 from common.ybconnection import YBConnection
 from common.cluster_helper import ClusterHelper
 from common.executor import Executor
+from select_workload import SelectWorkload
 from simple_workload import SimpleWorkload
 from idle_connections_workload import IdleConnectionsWorkload
+from simple_workload_sequential_access import SimpleWorkloadSequentialAccess
 
 class Main:
     # Example usage (see below for overrides):
@@ -14,7 +16,7 @@ class Main:
 
     def __init__(self):
         # List of available workloads
-        self.workloads = {'idle_connections': IdleConnectionsWorkload, 'simple' : SimpleWorkload}
+        self.workloads = {'idle_connections': IdleConnectionsWorkload, 'simple' : SimpleWorkload, 'select': SelectWorkload, 'simple_sequential': SimpleWorkloadSequentialAccess}
 
     def parse_arguments(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)

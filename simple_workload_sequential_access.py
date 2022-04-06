@@ -4,23 +4,26 @@ from common.timing_wrapper import TimingWrapper
 from locust import User, task, between
 from common.workload_config import workload_config
 
-""" A simple workload that inserts values and reads single rows
+""" A simple workload that inserts values and reads single rows, sequentially accessing tables
 """
-class SimpleWorkload(User):
+class SimpleWorkloadSequentialAccess(User):
     def __init__(self, environment):
         super().__init__(environment)
+        self.cur_table = 1
         self.conn = None
 
     # Wait time between each task
-    wait_time = between(0.5, 2)
+    wait_time = between(0.01, 0.1)
 
     def _random_string(self,length):
        return ''.join(random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(length))
 
     @task(40)
     def insert_row(self):
-        # Inserts a row into a random table
-        table_name = workload_config.cluster_helper.get_random_table_name(workload_config.num_tables)
+        # Inserts a row into a table
+        table_name = workload_config.cluster_helper.get_table_name(self.cur_table)
+        self.cur_table = (self.cur_table + 1) % workload_config.num_tables
+        self.cur_table += 1 if (self.cur_table == 0) else 0
         try:
             with self.conn.cursor() as curs:
                 ret, latency_ms = TimingWrapper(self.environment, curs, 'insert_row').execute(f"INSERT INTO {table_name} (v1, v2, v3) VALUES ('{self._random_string(40)}', {random.randrange(1000)}, '{self._random_string(100)}')")
@@ -30,8 +33,10 @@ class SimpleWorkload(User):
 
     @task(60)
     def read_row(self):
-        # Reads from a random table
-        table_name = workload_config.cluster_helper.get_random_table_name(workload_config.num_tables)
+        # Reads from table
+        table_name = workload_config.cluster_helper.get_table_name(self.cur_table)
+        self.cur_table = (self.cur_table + 1) % workload_config.num_tables
+        self.cur_table += 1 if (self.cur_table == 0) else 0
         try:
             with self.conn.cursor() as curs:
                 ret, latency_ms = TimingWrapper(self.environment, curs, 'select').execute(f'SELECT count(*) FROM {table_name}')

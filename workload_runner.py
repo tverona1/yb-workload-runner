@@ -59,7 +59,7 @@ class Main:
                             type=int,
                             help="Number of users")
         parser_execute_workload.add_argument('--spawn_rate', default=10,
-                            type=int,
+                            type=float,
                             help="Spawn rate (users / sec)")
         parser_execute_workload.add_argument('--execution_time', default=600,
                             type=int,
